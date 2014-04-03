@@ -49,13 +49,7 @@ If you already have a user account in your Azure Active Directory tenant, you ca
 4. Find the app key `ida:ClientId` and replace the value with the Client ID for WebApp-WebAPI-OAuth2-UserIdentity-DotNet from the Azure portal.
 5. Find the app key `ida:AppKey` and replace the value with the key for WebApp-WebAPI-OAuth2-UserIdentity-DotNet from the Azure portal.
 
-### Step 5:  Trust the IIS Express SSL certificate
-
-Since the web API is SSL protected, the client of the API (the web app) will refuse the SSL connection to the web API unless it trusts the API's SSL certificate.
-
-Coming soon.
-
-### Step 6:  Run the sample
+### Step 5:  Run the sample
 
 Clean the solution, rebuild the solution, and run it.
 
@@ -82,5 +76,3 @@ Coming soon.
 9. Add a new empty MVC5 controller OAuthController to the project.  Copy the implemementation of the controller from the sample.
 10. Open the AccountController controller,  find the `LogOff()` method, and add this line at the beginning of the method: `OAuthController.RemoveAllFromCache();`.  Also note the comments that are included in the sample file in the `LogOff()` method.
 11. In `web.config`, in `<appSettings>`, create keys for `ida:ClientId`, `ida:AppKey`, `ida:AADInstance`, `ida:Tenant`, `ida:GraphResourceId`, and `ida:GraphUserUrl` and set the values accordingly.  For the public Azure AD, the value of `ida:AADInstance` is `https://login.windows.net/{0}` the value of `ida:GraphResourceId` is `https://graph.windows.net`, and the value of `ida:GraphUserUrl` is `https://graph.windows.net/{0}/me?api-version=2013-11-08`.
-
-Finally, in the properties of the solution itself, set both projects as startup projects.
