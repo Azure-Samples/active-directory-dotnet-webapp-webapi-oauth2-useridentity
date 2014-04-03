@@ -57,7 +57,9 @@ Coming soon.
 
 ### Step 6:  Run the sample
 
-Explore the sample by signing in, clicking the User Profile link, signing out, and starting again.
+Clean the solution, rebuild the solution, and run it.
+
+Explore the sample by creating an account, signing in, clicking the User Profile link, signing out, and starting again.
 
 ## How To Deploy This Sample to Azure
 
