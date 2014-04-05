@@ -53,7 +53,7 @@ If you already have a user account in your Azure Active Directory tenant, you ca
 
 Clean the solution, rebuild the solution, and run it.
 
-Explore the sample by creating an account, signing in, clicking the User Profile link, signing out, and starting again.
+Explore the sample by registering an account in the application, signing in using that account, clicking the Profile link, on the Profile page linking an AAD user's account and seeing their profile information, signing out from the application, and starting again.
 
 ## How To Deploy This Sample to Azure
 
