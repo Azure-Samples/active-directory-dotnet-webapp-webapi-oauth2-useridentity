@@ -42,12 +42,7 @@ namespace WebApp.Controllers
         private static string aadInstance = ConfigurationManager.AppSettings["ida:AADInstance"];
         private static string tenant = ConfigurationManager.AppSettings["ida:Tenant"];
         
-        string authority = String.Format(CultureInfo.InvariantCulture, aadInstance, tenant);
-
-        private static readonly string authorizeUrl = string.Format(
-            CultureInfo.InvariantCulture,
-            aadInstance,
-            "common/oauth2/authorize?response_type=code&client_id={0}&resource={1}&redirect_uri={2}&state={3}");
+        private static string authority = String.Format(CultureInfo.InvariantCulture, aadInstance, tenant);
 
         //
         // This method will be invoked as a call-back from an authentication service (e.g., https://login.windows.net/).
@@ -136,19 +131,16 @@ namespace WebApp.Controllers
             // The state cookie will also capture information about the resource ID and redirect-to URL,
             //     for use in the Index method (after the login page redirects back to this controller).
             string stateValue = Guid.NewGuid().ToString();
-
+            
             AddOAuthStateToCache(stateValue);
 
             // Determine the path of the application, then append the path of the OAuthController.
-            string redirectUri = request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth";
+            Uri redirectUri = new Uri(request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth");
 
             // Construct the authorization request URL.
-            return String.Format(CultureInfo.InvariantCulture,
-                authorizeUrl,
-                Uri.EscapeDataString(clientId),
-                Uri.EscapeDataString(resourceId),
-                Uri.EscapeDataString(redirectUri),
-                Uri.EscapeDataString(stateValue));
+            string stateParam = "&state=" + stateValue;
+            AuthenticationContext authContext = new AuthenticationContext(authority);
+            return authContext.GetAuthorizationRequestURL(resourceId, clientId, redirectUri, UserIdentifier.AnyUser, stateParam).AbsoluteUri;
         }
 
         public static string GetAccessTokenFromCacheOrRefreshToken(string tenantId, string resourceId)
