@@ -81,15 +81,12 @@ namespace WebApp.Controllers
 
         
         /// Validate the state parameter in the OAuth message by checking its Guid portion against the value in the cache.
-        /// Again, we have used the DpApi to combine the Guid and RedirectUri values for sending in our authorization request.
+        /// Again, we have combined the Guid and RedirectUri values for sending in our authorization request.
         public string ValidateState(string state, string userObjectID) {
 
             try
             {
-                var dataProvider = new DpapiDataProtectionProvider("UserIdentityApp");
-                var dataProtector = dataProvider.Create(CookieAuthenticationDefaults.AuthenticationType, Startup.appKey, "v1");
-                var stateBits = dataProtector.Unprotect(Convert.FromBase64String(state));
-
+                var stateBits = Convert.FromBase64String(state);
                 var formatter = new BinaryFormatter();
                 var stream = new MemoryStream(stateBits);
                 List<String> stateList = (List<String>)formatter.Deserialize(stream);

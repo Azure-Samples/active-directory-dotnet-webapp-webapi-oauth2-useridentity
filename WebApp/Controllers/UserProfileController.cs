@@ -72,7 +72,7 @@ namespace WebApp.Controllers
 
                 string state = GenerateState(userObjectID, Request.Url.ToString());
 
-                ViewBag.AuthorizationUrl = authContext.GetAuthorizationRequestURL(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state); //TODO
+                ViewBag.AuthorizationUrl = authContext.GetAuthorizationRequestURL(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
 
                 return View(profile);
             
@@ -115,7 +115,7 @@ namespace WebApp.Controllers
             return View(profile);
         }
 
-        /// Generate a state value using the DpApi to combine a random Guid value and the origin of the request.
+        /// Generate a state value using a random Guid value and the origin of the request.
         /// The state value will be consumed by the OAuth controller for validation and redirection after login.
         /// Here we store the random Guid in the database cache for validation by the OAuth controller.
         public string GenerateState(string userObjId, string requestUrl)
@@ -136,9 +136,7 @@ namespace WebApp.Controllers
                 formatter.Serialize(stream, stateList);
                 var stateBits = stream.ToArray();
 
-                var dataProvider = new DpapiDataProtectionProvider("UserIdentityApp");
-                var dataProtector = dataProvider.Create(CookieAuthenticationDefaults.AuthenticationType, Startup.appKey, "v1");
-                return Url.Encode(Convert.ToBase64String(dataProtector.Protect(stateBits)));
+                return Url.Encode(Convert.ToBase64String(stateBits));
             }
             catch 
             {
