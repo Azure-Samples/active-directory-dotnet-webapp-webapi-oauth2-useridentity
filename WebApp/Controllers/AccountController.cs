@@ -289,10 +289,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            // Remove all cached tokens if the user signs out.
+            // Remove all cached tokens here if the user signs out.
             // This action is only necessary if using ASP.Net session state or cookies to cache tokens.
-            // If the application is using a database to cache tokens, you don't need to clear them when the user signs out.
-            OAuthController.RemoveAllFromCache();
+            // Since this application is using a database to cache tokens, you don't need to clear them when the user signs out.
+
             AuthenticationManager.SignOut();
             return RedirectToAction("Index", "Home");
         }

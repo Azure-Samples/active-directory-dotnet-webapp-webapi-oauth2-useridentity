@@ -29,60 +29,53 @@ using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Owin.Security.DataProtection;
+using Microsoft.Owin.Security.Cookies;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace WebApp.Controllers
 {
     [Authorize]
     public class UserProfileController : Controller
     {
-        private string graphResourceId = ConfigurationManager.AppSettings["ida:GraphResourceId"];
-        private string graphUserUrl = ConfigurationManager.AppSettings["ida:GraphUserUrl"];
-        
-        // If you are adapting an application that authenticates Azure AD users using Windows Identity Foundation,
-        // you can get the user's Tenant ID from ClaimsPrincipal.Current.  Otherwise, this sample caches the user's
-        // Tenant ID when it is obtained during the OAuth authorization flow.
-        // private const string TenantIdClaimType = "http://schemas.microsoft.com/identity/claims/tenantid";
-
         //
         // GET: /UserProfile/
         public async Task<ActionResult> Index()
         {
-            //
-            // Retrieve the user's name, tenantID, and access token since they are parameters used to query the Graph API.
-            //
             UserProfile profile = null;
-            string accessToken = null;
-            
-            // If you authenticated an Azure AD user using Windows Identity Foundation, you can use ClaimsPrincipal.Current to get the user's Tenant ID.
-            // string tenantId = ClaimsPrincipal.Current.FindFirst(TenantIdClaimType).Value;
-            string tenantId = (string)OAuthController.GetFromCache("TenantId");
+            AuthenticationContext authContext = null;
+            AuthenticationResult result = null;
+            string userObjectID = ClaimsPrincipal.Current.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
 
-            if (tenantId != null)
+            try
             {
-                accessToken = OAuthController.GetAccessTokenFromCacheOrRefreshToken(tenantId, graphResourceId);
+                ClientCredential credential = new ClientCredential(Startup.clientId, Startup.appKey);
+                authContext = new AuthenticationContext(Startup.Authority, new TokenDbCache(userObjectID));
+                result = authContext.AcquireTokenSilent(Startup.graphResourceId, credential, UserIdentifier.AnyUser);
             }
-
-            //
-            // If the user doesn't have an access token, they need to re-authorize.
-            //
-            if (accessToken == null)
+            catch (AdalException e)
             {
                 //
                 // The user needs to re-authorize.  Show them a message to that effect.
                 // If the user still has a valid session with Azure AD, they will not be prompted for their credentials.
                 //
 
-                // Remember where to bring the user back to in the application after the authorization code response is handled.
-                OAuthController.SaveInCache("RedirectTo", Request.Url);
-
                 profile = new UserProfile();
                 profile.DisplayName = " ";
                 profile.GivenName = " ";
                 profile.Surname = " ";
                 ViewBag.ErrorMessage = "AuthorizationRequired";
-                ViewBag.AuthorizationUrl = OAuthController.GetAuthorizationUrl(graphResourceId, this.Request);
+                authContext = new AuthenticationContext(Startup.Authority);
+                Uri redirectUri = new Uri(Request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth");
+
+                string state = GenerateState(userObjectID, Request.Url.ToString());
+
+                ViewBag.AuthorizationUrl = authContext.GetAuthorizationRequestURL(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state); //TODO
 
                 return View(profile);
+            
             }
 
             //
@@ -90,11 +83,11 @@ namespace WebApp.Controllers
             //
             string requestUrl = String.Format(
                 CultureInfo.InvariantCulture,
-                graphUserUrl,
-                HttpUtility.UrlEncode(tenantId));
+                Startup.graphUserUrl,
+                HttpUtility.UrlEncode(result.TenantId));
             HttpClient client = new HttpClient();
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
             HttpResponseMessage response = await client.SendAsync(request);
 
             //
@@ -110,7 +103,7 @@ namespace WebApp.Controllers
                 //
                 // If the call failed, then drop the current access token and show the user an error indicating they might need to sign-in again.
                 //
-                OAuthController.RemoveAccessTokenFromCache(graphResourceId);
+                authContext.TokenCache.Clear();
 
                 profile = new UserProfile();
                 profile.DisplayName = " ";
@@ -120,6 +113,38 @@ namespace WebApp.Controllers
             }
 
             return View(profile);
+        }
+
+        /// Generate a state value using the DpApi to combine a random Guid value and the origin of the request.
+        /// The state value will be consumed by the OAuth controller for validation and redirection after login.
+        /// Here we store the random Guid in the database cache for validation by the OAuth controller.
+        public string GenerateState(string userObjId, string requestUrl)
+        {
+            try
+            {
+                string stateGuid = Guid.NewGuid().ToString();
+                ApplicationDbContext db = new ApplicationDbContext();
+                db.UserStateValues.Add(new UserStateValue { stateGuid = stateGuid, userObjId = userObjId });
+                db.SaveChanges();
+
+                List<String> stateList = new List<String>();
+                stateList.Add(stateGuid);
+                stateList.Add(requestUrl);
+
+                var formatter = new BinaryFormatter();
+                var stream = new MemoryStream();
+                formatter.Serialize(stream, stateList);
+                var stateBits = stream.ToArray();
+
+                var dataProvider = new DpapiDataProtectionProvider("UserIdentityApp");
+                var dataProtector = dataProvider.Create(CookieAuthenticationDefaults.AuthenticationType, Startup.appKey, "v1");
+                return Url.Encode(Convert.ToBase64String(dataProtector.Protect(stateBits)));
+            }
+            catch 
+            {
+                return null;
+            }
+            
         }
     }
 }

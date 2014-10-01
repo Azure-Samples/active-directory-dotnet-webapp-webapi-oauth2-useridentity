@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
 
 namespace WebApp.Models
 {
@@ -9,9 +10,10 @@ namespace WebApp.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext()
-            : base("DefaultConnection")
-        {
-        }
+        public ApplicationDbContext() : base("DefaultConnection") {}
+
+        public DbSet<TokenCacheEntry> TokenCacheEntries { get; set; }
+
+        public DbSet<UserStateValue> UserStateValues { get; set; }
     }
 }
