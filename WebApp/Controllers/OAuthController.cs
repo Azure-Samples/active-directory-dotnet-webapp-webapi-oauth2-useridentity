@@ -50,8 +50,10 @@ namespace WebApp.Controllers
                 return View("Error");
 
             // Ensure there is a state value on the response.  If there is none, stop OAuth processing and display an error.
-            if (state == null)
+            if (state == null) {
+                ViewBag.ErrorMessage = "Error Generating State.";
                 return View("Error");
+            }
 
             // Handle errors from the OAuth response, if any.  If there are errors, stop OAuth processing and display an error.
             if (error != null)
@@ -59,8 +61,11 @@ namespace WebApp.Controllers
 
             string redirectUri = ValidateState(state, userObjectID);
 
-            if (redirectUri == null)
+            if (redirectUri == null) {
+                ViewBag.ErrorMessage = "Error Validating State.";
                 return View("Error");
+            }
+
  
             // Redeem the authorization code from the response for an access token and refresh token.
             try
@@ -73,9 +78,9 @@ namespace WebApp.Controllers
                 // Return to the originating page where the user triggered the sign-in
                 return Redirect(redirectUri);
             }
-            catch
+            catch (Exception e)
             {
-                return View("Error");
+                return Redirect("/UserProfile/Index?authError=token");
             }
         }
 
@@ -110,8 +115,6 @@ namespace WebApp.Controllers
             {
                 return null;
             }
-
-            
         }
     }
 }

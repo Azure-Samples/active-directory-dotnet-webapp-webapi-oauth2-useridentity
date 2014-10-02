@@ -34,6 +34,7 @@ using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.Cookies;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Net;
 
 namespace WebApp.Controllers
 {
@@ -42,7 +43,7 @@ namespace WebApp.Controllers
     {
         //
         // GET: /UserProfile/
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string authError)
         {
             UserProfile profile = null;
             AuthenticationContext authContext = null;
@@ -53,66 +54,100 @@ namespace WebApp.Controllers
             {
                 ClientCredential credential = new ClientCredential(Startup.clientId, Startup.appKey);
                 authContext = new AuthenticationContext(Startup.Authority, new TokenDbCache(userObjectID));
+
+                if (authError != null)
+                {
+                    Uri redirectUri = new Uri(Request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth");
+                    string state = GenerateState(userObjectID, Request.Url.ToString());
+                    ViewBag.AuthorizationUrl = authContext.GetAuthorizationRequestURL(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
+
+                    profile = new UserProfile();
+                    profile.DisplayName = " ";
+                    profile.GivenName = " ";
+                    profile.Surname = " ";
+                    ViewBag.ErrorMessage = "UnexpectedError";
+                    return View(profile);
+                }
+
                 result = authContext.AcquireTokenSilent(Startup.graphResourceId, credential, UserIdentifier.AnyUser);
             }
             catch (AdalException e)
             {
-                //
-                // The user needs to re-authorize.  Show them a message to that effect.
-                // If the user still has a valid session with Azure AD, they will not be prompted for their credentials.
-                //
+                if (e.ErrorCode == "failed_to_acquire_token_silently") {
+                    
+                    // The user needs to re-authorize.  Show them a message to that effect.
+                    // If the user still has a valid session with Azure AD, they will not be prompted for their credentials.
 
-                profile = new UserProfile();
-                profile.DisplayName = " ";
-                profile.GivenName = " ";
-                profile.Surname = " ";
-                ViewBag.ErrorMessage = "AuthorizationRequired";
-                authContext = new AuthenticationContext(Startup.Authority);
-                Uri redirectUri = new Uri(Request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth");
+                    profile = new UserProfile();
+                    profile.DisplayName = " ";
+                    profile.GivenName = " ";
+                    profile.Surname = " ";
+                    ViewBag.ErrorMessage = "AuthorizationRequired";
+                    authContext = new AuthenticationContext(Startup.Authority);
+                    Uri redirectUri = new Uri(Request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth");
 
-                string state = GenerateState(userObjectID, Request.Url.ToString());
+                    string state = GenerateState(userObjectID, Request.Url.ToString());
 
-                ViewBag.AuthorizationUrl = authContext.GetAuthorizationRequestURL(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
+                    ViewBag.AuthorizationUrl = authContext.GetAuthorizationRequestURL(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
 
-                return View(profile);
+                    return View(profile);
+                }
+
+                ViewBag.ErrorMessage = "Error while Acquiring Token from Cache.";
+                return View("Error");
             
             }
 
-            //
-            // Call the Graph API and retrieve the user's profile.
-            //
-            string requestUrl = String.Format(
-                CultureInfo.InvariantCulture,
-                Startup.graphUserUrl,
-                HttpUtility.UrlEncode(result.TenantId));
-            HttpClient client = new HttpClient();
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
-            HttpResponseMessage response = await client.SendAsync(request);
-
-            //
-            // Return the user's profile in the view.
-            //
-            if (response.IsSuccessStatusCode)
-            {
-                string responseString = await response.Content.ReadAsStringAsync();
-                profile = JsonConvert.DeserializeObject<UserProfile>(responseString);
-            }
-            else
+            try 
             {
                 //
-                // If the call failed, then drop the current access token and show the user an error indicating they might need to sign-in again.
+                // Call the Graph API and retrieve the user's profile.
                 //
-                authContext.TokenCache.Clear();
+                string requestUrl = String.Format(
+                    CultureInfo.InvariantCulture,
+                    Startup.graphUserUrl,
+                    HttpUtility.UrlEncode(result.TenantId));
+                HttpClient client = new HttpClient();
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
+                HttpResponseMessage response = await client.SendAsync(request);
 
-                profile = new UserProfile();
-                profile.DisplayName = " ";
-                profile.GivenName = " ";
-                profile.Surname = " ";
-                ViewBag.ErrorMessage = "UnexpectedError";
+                //
+                // Return the user's profile in the view.
+                //
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseString = await response.Content.ReadAsStringAsync();
+                    profile = JsonConvert.DeserializeObject<UserProfile>(responseString);
+                    return View(profile);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    //
+                    // If the call failed, then drop the current access token and show the user an error indicating they might need to sign-in again.
+                    //
+                    authContext.TokenCache.Clear();
+
+                    Uri redirectUri = new Uri(Request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth");
+                    string state = GenerateState(userObjectID, Request.Url.ToString());
+                    ViewBag.AuthorizationUrl = authContext.GetAuthorizationRequestURL(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
+
+                    profile = new UserProfile();
+                    profile.DisplayName = " ";
+                    profile.GivenName = " ";
+                    profile.Surname = " ";
+                    ViewBag.ErrorMessage = "UnexpectedError";
+                    return View(profile);
+                }
+
+                ViewBag.ErrorMessage = "Error Calling Graph API.";
+                return View("Error");
+            } 
+            catch 
+            {
+                ViewBag.ErrorMessage = "Error Calling Graph API.";
+                return View("Error");
             }
-
-            return View(profile);
         }
 
         /// Generate a state value using a random Guid value and the origin of the request.

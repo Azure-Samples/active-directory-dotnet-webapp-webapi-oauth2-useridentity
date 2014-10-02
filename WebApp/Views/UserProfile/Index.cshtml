@@ -27,6 +27,6 @@
 
 @if (ViewBag.ErrorMessage == "UnexpectedError")
 {
-    <p>An unexpected error occurred while retrieving your profile.  Please try again.  You may need to sign-in.</p>
+    <p class="text-danger">An unexpected error occurred while retrieving your profile.  You may need to <a href="@ViewBag.AuthorizationUrl">sign-in again</a>.</p>
 }
 
