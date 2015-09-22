@@ -1,3 +1,9 @@
+---
+services:
+platforms:
+author: azure
+---
+
 WebApp-WebAPI-OAuth2-UserIdentity-DotNet
 ========================================
 
