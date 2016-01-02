@@ -30,6 +30,7 @@ using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.Cookies;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace WebApp.Controllers
 {
@@ -41,7 +42,7 @@ namespace WebApp.Controllers
         // On completion, the method will cache the refresh token and access tokens, and redirect to the URL
         //     specified in the state parameter.
         //
-        public ActionResult Index(string code, string error, string error_description, string resource, string state)
+        public async Task<ActionResult> Index(string code, string error, string error_description, string resource, string state)
         {
             string userObjectID = ClaimsPrincipal.Current.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
 
@@ -72,7 +73,7 @@ namespace WebApp.Controllers
             {
                 ClientCredential credential = new ClientCredential(Startup.clientId, Startup.appKey);
                 AuthenticationContext authContext = new AuthenticationContext(Startup.Authority, new TokenDbCache(userObjectID));
-                AuthenticationResult result = authContext.AcquireTokenByAuthorizationCode(
+                AuthenticationResult result = await authContext.AcquireTokenByAuthorizationCodeAsync(
                     code, new Uri(Request.Url.GetLeftPart(UriPartial.Path)), credential, Startup.graphResourceId);
 
                 // Return to the originating page where the user triggered the sign-in

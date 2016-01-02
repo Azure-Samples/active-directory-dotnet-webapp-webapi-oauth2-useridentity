@@ -59,7 +59,7 @@ namespace WebApp.Controllers
                 {
                     Uri redirectUri = new Uri(Request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth");
                     string state = GenerateState(userObjectID, Request.Url.ToString());
-                    ViewBag.AuthorizationUrl = authContext.GetAuthorizationRequestURL(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
+                    ViewBag.AuthorizationUrl = await authContext.GetAuthorizationRequestUrlAsync(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
 
                     profile = new UserProfile();
                     profile.DisplayName = " ";
@@ -69,7 +69,7 @@ namespace WebApp.Controllers
                     return View(profile);
                 }
 
-                result = authContext.AcquireTokenSilent(Startup.graphResourceId, credential, UserIdentifier.AnyUser);
+                result = await authContext.AcquireTokenSilentAsync(Startup.graphResourceId, credential, UserIdentifier.AnyUser);
             }
             catch (AdalException e)
             {
@@ -88,7 +88,7 @@ namespace WebApp.Controllers
 
                     string state = GenerateState(userObjectID, Request.Url.ToString());
 
-                    ViewBag.AuthorizationUrl = authContext.GetAuthorizationRequestURL(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
+                    ViewBag.AuthorizationUrl = await authContext.GetAuthorizationRequestUrlAsync(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
 
                     return View(profile);
                 }
@@ -130,7 +130,7 @@ namespace WebApp.Controllers
 
                     Uri redirectUri = new Uri(Request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth");
                     string state = GenerateState(userObjectID, Request.Url.ToString());
-                    ViewBag.AuthorizationUrl = authContext.GetAuthorizationRequestURL(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
+                    ViewBag.AuthorizationUrl = await authContext.GetAuthorizationRequestUrlAsync(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
 
                     profile = new UserProfile();
                     profile.DisplayName = " ";
