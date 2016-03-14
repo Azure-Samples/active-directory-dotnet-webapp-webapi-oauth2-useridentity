@@ -48,6 +48,7 @@ namespace WebApp.Controllers
             UserProfile profile = null;
             AuthenticationContext authContext = null;
             AuthenticationResult result = null;
+            bool reauth = false;
             string userObjectID = ClaimsPrincipal.Current.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
 
             try
@@ -73,30 +74,37 @@ namespace WebApp.Controllers
             }
             catch (AdalException e)
             {
-                if (e.ErrorCode == "failed_to_acquire_token_silently") {
-                    
-                    // The user needs to re-authorize.  Show them a message to that effect.
-                    // If the user still has a valid session with Azure AD, they will not be prompted for their credentials.
-
-                    profile = new UserProfile();
-                    profile.DisplayName = " ";
-                    profile.GivenName = " ";
-                    profile.Surname = " ";
-                    ViewBag.ErrorMessage = "AuthorizationRequired";
-                    authContext = new AuthenticationContext(Startup.Authority);
-                    Uri redirectUri = new Uri(Request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth");
-
-                    string state = GenerateState(userObjectID, Request.Url.ToString());
-
-                    ViewBag.AuthorizationUrl = await authContext.GetAuthorizationRequestUrlAsync(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
-
-                    return View(profile);
+                if (e.ErrorCode == "failed_to_acquire_token_silently")
+                {
+                    // Capture error for handling outside of catch block
+                    reauth = true;
                 }
-
-                ViewBag.ErrorMessage = "Error while Acquiring Token from Cache.";
-                return View("Error");
-            
+                else
+                {
+                    ViewBag.ErrorMessage = "Error while Acquiring Token from Cache.";
+                    return View("Error");
+                }
             }
+
+            if (reauth) {
+                // The user needs to re-authorize.  Show them a message to that effect.
+                // If the user still has a valid session with Azure AD, they will not be prompted for their credentials.
+
+                profile = new UserProfile();
+                profile.DisplayName = " ";
+                profile.GivenName = " ";
+                profile.Surname = " ";
+                ViewBag.ErrorMessage = "AuthorizationRequired";
+                authContext = new AuthenticationContext(Startup.Authority);
+                Uri redirectUri = new Uri(Request.Url.GetLeftPart(UriPartial.Authority).ToString() + "/OAuth");
+
+                string state = GenerateState(userObjectID, Request.Url.ToString());
+
+                ViewBag.AuthorizationUrl = await authContext.GetAuthorizationRequestUrlAsync(Startup.graphResourceId, Startup.clientId, redirectUri, UserIdentifier.AnyUser, state == null ? null : "&state=" + state);
+
+                return View(profile);
+            }
+            
 
             try 
             {
