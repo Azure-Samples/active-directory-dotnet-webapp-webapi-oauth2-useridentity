@@ -37,12 +37,12 @@ If you already have a user account in your Azure Active Directory tenant, you ca
 
 1. Sign in to the [Azure portal](https://portal.azure.com).
 2. On the top bar, click on your account and under the **Directory** list, choose the Active Directory tenant where you wish to register your application.
-2. Click on **More Services** in the left hand nav, and choose **Azure Active Directory**.
-3. Click on **Registered Applications** and choose **Add**.
-4. Enter a friendly name for the application, for example 'WebApp-WebAPI-OAuth2-UserIdentity-DotNet' and select 'Web Application and/or Web API' as the Application Type. For the sign-on URL, enter the base URL for the sample, which is by default `https://localhost:44323`. Click on **Create** to create the application.
-5. While still in the Azure portal, choose your application, click on **Settings** and choose **Properties**.
-6. Find the Application ID value and copy it to the clipboard.
-7. From the Settings menu, choose **Keys** and add a key - select a key duration of either 1 year or 2 years. When you save this page, the key value will be displayed, copy and save the value in a safe location - you will need this key later to configure the project in Visual Studio - this key value will not be displayed again, nor retrievable by any other means, so please record it as soon as it is visible from the Azure Portal.
+3. Click on **More Services** in the left hand nav, and choose **Azure Active Directory**.
+4. Click on **App registrations** and choose **Add**.
+5. Enter a friendly name for the application, for example 'WebApp-WebAPI-OAuth2-UserIdentity-DotNet' and select 'Web Application and/or Web API' as the Application Type. For the sign-on URL, enter the base URL for the sample, which is by default `https://localhost:44323`. Click on **Create** to create the application.
+6. While still in the Azure portal, choose your application, click on **Settings** and choose **Properties**.
+7. Find the Application ID value and copy it to the clipboard.
+8. From the Settings menu, choose **Keys** and add a key - select a key duration of either 1 year or 2 years. When you save this page, the key value will be displayed, copy and save the value in a safe location - you will need this key later to configure the project in Visual Studio - this key value will not be displayed again, nor retrievable by any other means, so please record it as soon as it is visible from the Azure Portal.
 
 ### Step 4:  Configure the sample to use your Azure AD tenant
 
