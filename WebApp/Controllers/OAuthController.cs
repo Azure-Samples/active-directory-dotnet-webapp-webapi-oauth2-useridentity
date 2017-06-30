@@ -37,7 +37,7 @@ namespace WebApp.Controllers
     public class OAuthController : Controller
     {
         //
-        // This method will be invoked as a call-back from an authentication service (e.g., https://login.windows.net/).
+        // This method will be invoked as a call-back from an authentication service (e.g., https://login.microsoftonline.com/).
         // It is not intended to be called directly, only as a redirect from the authorization request in UserProfileController.
         // On completion, the method will cache the refresh token and access tokens, and redirect to the URL
         //     specified in the state parameter.
