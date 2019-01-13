@@ -1,7 +1,11 @@
 ---
 services: active-directory
 platforms: dotnet
-author: dstrockis
+author: jmprieur
+level: 300
+client: .NET Web App (MVC)
+service: Microsoft Graph
+endpoint: AAD v1.0
 ---
 
 # Calling Azure AD protected web APIs in a web app using OAuth 2.0
@@ -52,7 +56,12 @@ From your shell or command line:
 
 Clean the solution, rebuild the solution, and run it.
 
-Explore the sample by registering an account in the application, signing in using that account, clicking the Profile link, on the Profile page linking an AAD user's account and seeing their profile information, signing out from the application, and starting again.
+Explore the sample by
+
+1. registering an account in the application, 
+1. signing in using that account, clicking the Profile link, 
+1. on the Profile page linking an AAD user's account and seeing their profile information, 
+1. sign out from the application, and starting again.
 
 ## How To Deploy This Sample to Azure
 
@@ -64,15 +73,15 @@ Coming soon.
 
 ## How To Recreate This Sample
 
-1. In Visual Studio 2013, create a new ASP.Net MVC web application called WebApp with Authentication set to Invididual User Accounts.
-2. Set SSL Enabled to be True.  Note the SSL URL.
-3. In the project properties, Web properties, set the Project Url to be the SSL URL.
-4. Add the (stable) Active Directory Authentication Library NuGet (`Microsoft.IdentityModel.Clients.ActiveDirectory`), version 1.0.3 (or higher).
-5. In the `Models` folder add a new class called `UserProfile.cs`.  Copy the implementation of UserProfile from this sample into the class.
-6. Add a new empty MVC5 controller UserProfileController to the project.  Copy the implementation of the controller from the sample.  Remember to include the [Authorize] attribute on the class definition.
-7. In `Views` --> `UserProfile` create a new view, `Index.cshtml`, and copy the implementation from this sample.
-8. In the shared `_Layout` view, add the Action Link for Profile that is in the sample.
-9. Add a new empty MVC5 controller OAuthController to the project.  Copy the implemementation of the controller from the sample.
-10. Open the AccountController controller,  find the `LogOff()` method, and add this line at the beginning of the method: `OAuthController.RemoveAllFromCache();`.  Also note the comments that are included in the sample file in the `LogOff()` method.
-11. In `web.config`, in `<appSettings>`, create keys for `ida:ClientId`, `ida:AppKey`, `ida:AADInstance`, `ida:Tenant`, `ida:GraphResourceId`, and `ida:GraphUserUrl` and set the values accordingly.  For the public Azure AD, the value of `ida:AADInstance` is `https://login.microsoftonline.com/{0}` the value of `ida:GraphResourceId` is `https://graph.windows.net`, and the value of `ida:GraphUserUrl` is `https://graph.windows.net/{0}/me?api-version=2013-11-08`.
-12. In `web.config` add this line in the `<system.web>` section: `<sessionState timeout="525600" />`.  This increases the ASP.Net session state timeout to it's maximum value so that access tokens and refresh tokens cache in session state aren't cleared after the default timeout of 20 minutes.
+1. In Visual Studio 2017, create a new ASP.Net MVC web application with Authentication set to `Invididual User Accounts`.
+1. Set SSL Enabled to be True.  Note the SSL URL.
+1. In the project properties, Web properties, set the Project Url to be the SSL URL.
+1. Add the latest [Active Directory Authentication Library NuGet] (`Microsoft.IdentityModel.Clients.ActiveDirectory`).
+1. In the `Models` folder add a new class called `UserProfile.cs`.  Copy the implementation of `UserProfile` from this sample into the class.
+1. Add a new empty MVC5 controller `UserProfileController` to the project.  Copy the implementation of the controller from the sample.  Remember to include the [Authorize] attribute on the class definition.
+1. In `Views` --> `UserProfile` create a new view, `Index.cshtml`, and copy the implementation from this sample.
+1. In the shared `_Layout` view, add the Action Link for Profile that is in the sample.
+1. Add a new empty MVC5 controller `OAuthController` to the project.  Copy the implemementation of the controller from the sample.
+1. In AccountController's LogOff() method, copy the code which clears the token cache.
+1. In `web.config`, in `<appSettings>`, create keys for `ida:ClientId`, `ida:AppKey`, `ida:AADInstance`, `ida:Tenant`, `ida:GraphResourceId`, and `ida:GraphUserUrl` and set the values accordingly.  For the public Azure AD, the value of `ida:AADInstance` is `https://login.microsoftonline.com/{0}` the value of `ida:GraphResourceId` is `https://graph.microsoft.com`, and the value of `ida:GraphUserUrl` is `https://graph.microsoft.com/me`.
+1. In `web.config` add this line in the `<system.web>` section: `<sessionState timeout="525600" />`.  This increases the ASP.Net session state timeout to it's maximum value so that access tokens and refresh tokens cache in session state aren't cleared after the default timeout of 20 minutes.
