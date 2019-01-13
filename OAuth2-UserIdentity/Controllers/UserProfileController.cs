@@ -31,6 +31,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -188,9 +189,11 @@ namespace OAuth2_UserIdentity.Controllers
                 stateList.Add(stateGuid);
                 stateList.Add(requestUrl);
 
-                var formatter = new BinaryFormatter();
                 var stream = new MemoryStream();
-                formatter.Serialize(stream, stateList);
+
+                DataContractSerializer ser = new DataContractSerializer(typeof(List<String>));
+                ser.WriteObject(stream, stateList);
+
                 var stateBits = stream.ToArray();
 
                 return Url.Encode(Convert.ToBase64String(stateBits));

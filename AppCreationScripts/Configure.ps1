@@ -168,7 +168,7 @@ Function ConfigureApplications
    $serviceAppKey = $pw
    $serviceAadApplication = New-AzureADApplication -DisplayName "OAuth2-UserIdentity" `
                                                    -HomePage "https://localhost:44323/" `
-                                                   -LogoutUrl "https://localhost:44323/Account/EndSession" `
+                                                   -LogoutUrl "https://localhost:44323/Account/LogOff" `
                                                    -ReplyUrls "https://localhost:44323/", "https://localhost:44323/OAuth" `
                                                    -IdentifierUris "https://$tenantName/OAuth2-UserIdentity" `
                                                    -AvailableToOtherTenants $True `

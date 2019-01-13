@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -98,9 +99,13 @@ namespace OAuth2_UserIdentity.Controllers
             try
             {
                 var stateBits = Convert.FromBase64String(state);
-                var formatter = new BinaryFormatter();
                 var stream = new MemoryStream(stateBits);
-                List<String> stateList = (List<String>)formatter.Deserialize(stream);
+
+                DataContractSerializer ser = new DataContractSerializer(typeof(List<String>));
+
+                // Deserialize the data and read it from the instance.
+                List<String> stateList = (List<String>)ser.ReadObject(stream);
+
                 var stateGuid = stateList[0];
 
                 ApplicationDbContext db = new ApplicationDbContext();
