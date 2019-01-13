@@ -124,6 +124,35 @@ Explore the sample by
 1. on the Profile page linking an AAD user's account and seeing their profile information, 
 1. sign out from the application, and starting again.
 
+## How to deploy this sample to Azure
+
+This project has one WebApp / Web API projects. To deploy them to Azure Web Sites, you'll need, for each one, to:
+
+- create an Azure Web Site
+- publish the Web App / Web APIs to the web site, and
+- update its client(s) to call the web site instead of IIS Express.
+
+### Create and publish the `OAuth2-UserIdentity` to an Azure Web Site
+
+1. Sign in to the [Azure portal](https://portal.azure.com).
+1. Click **Create a resource** in the top left-hand corner, select **Web + Mobile** --> **Web App**, select the hosting plan and region, and give your web site a name, for example, `OAuth2-UserIdentity-contoso.azurewebsites.net`.  Click Create Web Site.
+1. Choose **SQL Database**, click on "Create a new database", enter `DefaultConnection` as the **DB Connection String Name**.
+1. Select or create a database server, and enter server login credentials.
+1. Once the web site is created, click on it to manage it.  For this set of steps, download the publish profile by clicking **Get publish profile** and save it.  Other deployment mechanisms, such as from source control, can also be used.
+1. Switch to Visual Studio and go to the OAuth2-UserIdentity project.  Right click on the project in the Solution Explorer and select **Publish**.  Click **Import Profile** on the bottom bar, and import the publish profile that you downloaded earlier.
+1. Click on **Settings** and in the `Connection tab`, update the Destination URL so that it is https, for example [https://OAuth2-UserIdentity-contoso.azurewebsites.net](https://OAuth2-UserIdentity-contoso.azurewebsites.net). Click Next.
+1. On the Settings tab, make sure `Enable Organizational Authentication` is NOT selected.  Click **Save**. Click on **Publish** on the main screen.
+1. Visual Studio will publish the project and automatically open a browser to the URL of the project.  If you see the default web page of the project, the publication was successful.
+
+### Update the Active Directory tenant application registration for `OAuth2-UserIdentity`
+
+1. Navigate to the [Azure portal](https://portal.azure.com).
+1. On the top bar, click on your account and under the **Directory** list, choose the Active Directory tenant containing the `OAuth2-UserIdentity` application.
+1. On the applications tab, select the `OAuth2-UserIdentity` application.
+1. In the **Settings** | page for your application, update the Logout URL fields with the address of your service, for example [https://OAuth2-UserIdentity-contoso.azurewebsites.net](https://OAuth2-UserIdentity-contoso.azurewebsites.net)
+1. From the *Settings -> Properties* menu, update the **Home page URL**, to the address of your service, for example [https://OAuth2-UserIdentity-contoso.azurewebsites.net](https://OAuth2-UserIdentity-contoso.azurewebsites.net). Save the configuration.
+1. Add the same URL in the list of values of the *Settings -> Reply URLs* menu
+
 ## How To Recreate This Sample
 
 1. In Visual Studio 2017, create a new ASP.Net MVC web application with Authentication set to `Invididual User Accounts`.
