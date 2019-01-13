@@ -10,7 +10,7 @@ endpoint: AAD v1.0
 
 # Calling Azure AD protected web APIs in a web app using OAuth 2.0
 
-![Build badge](https://identitydivision.visualstudio.com/_apis/public/build/definitions/a7934fdd-dcde-4492-a406-7fad6ac00e17/<BuildNumber>/badge)
+![Build badge](https://identitydivision.visualstudio.com/_apis/public/build/definitions/a7934fdd-dcde-4492-a406-7fad6ac00e17/756/badge)
 
 ## About this sample
 
