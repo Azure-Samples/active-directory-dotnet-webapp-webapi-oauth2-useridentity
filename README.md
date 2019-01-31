@@ -119,9 +119,9 @@ Clean the solution, rebuild the solution, and run it.
 
 Explore the sample by
 
-1. registering an account in the application, 
-1. signing in using that account, clicking the Profile link, 
-1. on the Profile page linking an AAD user's account and seeing their profile information, 
+1. registering an account in the application
+1. signing in using that account, clicking the Profile link
+1. on the Profile page linking an AAD user's account and seeing their profile information
 1. sign out from the application, and starting again.
 
 ## How to deploy this sample to Azure
