@@ -78,13 +78,12 @@ As a first step you'll need to:
    - In the Redirect URI (optional) section, select **Web** in the combo-box and enter the following redirect URIs. 
        - `https://localhost:44323/`
        - `https://localhost:44323/OAuth`
-       - 
 > You can add additional redirect uri's from the **Authentication** tab of the application.
 1. Select **Register** to create the application.
 1. On the app **Overview** page, find the **Application (client) ID** value and record it for later. You'll need it to configure the Visual Studio configuration file for this project.
 1. In the list of pages for the app, select **Authentication**.
    - In the **Advanced settings** section set **Logout URL** to `https://localhost:44323/Account/LogOff`
-   - In the **Advanced settings** | **Implicit grant** section, check **Access tokens** and **ID tokens** as this sample requires the [Implicit grant flow](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-implicit-grant-flow)to be enabled to
+   - In the **Advanced settings** | **Implicit grant** section, check **Access tokens** and **ID tokens** as this sample requires the [Implicit grant flow](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-implicit-grant-flow) to be enabled to
    sign-in the user, and call an API.
 1. Select **Save**.
 1. From the **Certificates & secrets** page, in the **Client secrets** section, choose **New client secret**:
@@ -157,7 +156,7 @@ This project has one WebApp / Web API projects. To deploy them to Azure Web Site
 
 ## How To Recreate This Sample
 
-1. In Visual Studio 2017, create a new ASP.Net MVC web application with Authentication set to `Invididual User Accounts`.
+1. In Visual Studio 2017, create a new ASP.Net MVC web application with Authentication set to `Individual User Accounts`.
 1. Set SSL Enabled to be True.  Note the SSL URL.
 1. In the project properties, Web properties, set the Project Url to be the SSL URL.
 1. Add the latest [Active Directory Authentication Library NuGet] (`Microsoft.IdentityModel.Clients.ActiveDirectory`).
@@ -165,7 +164,7 @@ This project has one WebApp / Web API projects. To deploy them to Azure Web Site
 1. Add a new empty MVC5 controller `UserProfileController` to the project.  Copy the implementation of the controller from the sample.  Remember to include the [Authorize] attribute on the class definition.
 1. In `Views` --> `UserProfile` create a new view, `Index.cshtml`, and copy the implementation from this sample.
 1. In the shared `_Layout` view, add the Action Link for Profile that is in the sample.
-1. Add a new empty MVC5 controller `OAuthController` to the project.  Copy the implemementation of the controller from the sample.
+1. Add a new empty MVC5 controller `OAuthController` to the project.  Copy the implementation of the controller from the sample.
 1. In AccountController's LogOff() method, copy the code which clears the token cache.
 1. In `web.config`, in `<appSettings>`, create keys for `ida:ClientId`, `ida:AppKey`, `ida:AADInstance`, `ida:Tenant`, `ida:GraphResourceId`, and `ida:GraphUserUrl` and set the values accordingly.  For the public Azure AD, the value of `ida:AADInstance` is `https://login.microsoftonline.com/{0}` the value of `ida:GraphResourceId` is `https://graph.microsoft.com`, and the value of `ida:GraphUserUrl` is `https://graph.microsoft.com/me`.
 1. In `web.config` add this line in the `<system.web>` section: `<sessionState timeout="525600" />`.  This increases the ASP.Net session state timeout to it's maximum value so that access tokens and refresh tokens cache in session state aren't cleared after the default timeout of 20 minutes.
