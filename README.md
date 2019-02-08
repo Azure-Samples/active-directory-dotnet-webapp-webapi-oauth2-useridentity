@@ -75,9 +75,11 @@ As a first step you'll need to:
 1. When the **Register an application page** appears, enter your application's registration information:
    - In the **Name** section, enter a meaningful application name that will be displayed to users of the app, for example `OAuth2-UserIdentity`.
    - In the **Supported account types** section, select **Accounts in any organizational directory and personal Microsoft accounts (e.g. Skype, Xbox, Outlook.com)**.
-   - In the Redirect URI (optional) section, select **Web** in the combo-box and enter the following redirect URIs.
+   - In the Redirect URI (optional) section, select **Web** in the combo-box and enter the following redirect URIs. 
        - `https://localhost:44323/`
        - `https://localhost:44323/OAuth`
+       - 
+> You can add additional redirect uri's from the **Authentication** tab of the application.
 1. Select **Register** to create the application.
 1. On the app **Overview** page, find the **Application (client) ID** value and record it for later. You'll need it to configure the Visual Studio configuration file for this project.
 1. In the list of pages for the app, select **Authentication**.

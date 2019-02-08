@@ -66,7 +66,7 @@ namespace OAuth2_UserIdentity.Controllers
 
             try
             {
-                ClientCredential credential = new ClientCredential(Startup.clientId, Startup.appKey);
+                ClientCredential credential = new ClientCredential(Startup.clientId, Startup.clientSecret);
                 authContext = new AuthenticationContext(Startup.Authority, new TokenDbCache(userObjectID));
 
                 if (authError != null)

@@ -199,7 +199,7 @@ Function ConfigureApplications
    # Add Required Resources Access (from 'service' to 'Microsoft Graph')
    Write-Host "Getting access from 'service' to 'Microsoft Graph'"
    $requiredPermissions = GetRequiredPermissions -applicationDisplayName "Microsoft Graph" `
-                                                -requiredDelegatedPermissions "User.Read" `
+                                                -requiredDelegatedPermissions "User.Read";
 
    $requiredResourcesAccess.Add($requiredPermissions)
 
@@ -211,7 +211,7 @@ Function ConfigureApplications
    $configFile = $pwd.Path + "\..\OAuth2-UserIdentity\Web.Config"
    Write-Host "Updating the sample code ($configFile)"
    ReplaceSetting -configFilePath $configFile -key "ida:ClientId" -newValue $serviceAadApplication.AppId
-   ReplaceSetting -configFilePath $configFile -key "ida:AppKey" -newValue $serviceAppKey
+   ReplaceSetting -configFilePath $configFile -key "ida:ClientSecret" -newValue $serviceAppKey
    ReplaceSetting -configFilePath $configFile -key "ida:Tenant" -newValue $tenantName
 
    Add-Content -Value "</tbody></table></body></html>" -Path createdApps.html  

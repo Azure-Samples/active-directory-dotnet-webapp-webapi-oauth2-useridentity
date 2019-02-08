@@ -76,7 +76,7 @@ namespace OAuth2_UserIdentity.Controllers
             // Redeem the authorization code from the response for an access token and refresh token.
             try
             {
-                ClientCredential credential = new ClientCredential(Startup.clientId, Startup.appKey);
+                ClientCredential credential = new ClientCredential(Startup.clientId, Startup.clientSecret);
                 AuthenticationContext authContext = new AuthenticationContext(Startup.Authority, new TokenDbCache(userObjectID));
                 AuthenticationResult result = await authContext.AcquireTokenByAuthorizationCodeAsync(
                     code, new Uri(Request.Url.GetLeftPart(UriPartial.Path)), credential, Startup.graphResourceId);
