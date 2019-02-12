@@ -135,29 +135,33 @@ This project has one WebApp / Web API projects. To deploy them to Azure Web Site
 ### Create and publish the `OAuth2-UserIdentity` to an Azure Web Site
 
 1. Sign in to the [Azure portal](https://portal.azure.com).
-1. Click **Create a resource** in the top left-hand corner, select **Web** --> **Web App**, and give your web site a name, for example, `OAuth2-UserIdentity-contoso.azurewebsites.net`.
-1. Thereafter select the subscription, resource group, App service plan and region, `OS` will be **Windows** and `Publish` will be **Code**.
-1. Click `Create`.
-1. In the **Additional Resources** list on the right hand side, Choose **SQL Database**, to create a new database. Follow the `Quickstart tutorial` if needed.
-1. Select or create a database server, and enter server login credentials.
-1. Once the database is created, click on it to get to its manage screen.
+1. Click `Create a resource` in the top left-hand corner, select **Web** --> **Web App**, and give your web site a name, for example, `OAuth2-UserIdentity-contoso.azurewebsites.net`.
+1. Thereafter select the `Subscription`, `Resource Group`, `App service plan and Location`. `OS` will be **Windows** and `Publish` will be **Code**.
+1. Click `Create` and wait for the App Service to be created.
+1. Once you get the `Deployment succeeded` notification, then click on `Go to resource` to navigate to the newly created App service.
+1. The following steps provide instructions to create a Sql database that the sample needs. If you already have a Sql Server and database present and a connection string available, skip the steps till we ask you to provide the connections string in the `Application Settings`.
+1. Click `Create a resource` in the top left-hand corner again, select **Databases** --> **SQL Database**, to create a new database. Follow the `Quickstart tutorial` if needed.
+1. You can name the Sql server and database whatever you want to.
+1. Select or create a database server, and enter server login credentials. Carefully note down the username and password for the Sql server as you'll need it when constructing your Sql conenction string later.
+1. Wait for the `Deployment succeeded` notification, then click on `Go to resource` to navigate to the newly created database's manage screen.
 1. Click on **Connection Strings** on left menu and copy the **ADO.NET (SQL authentication)** connection string. Populate  **User ID={your_username};Password={your_password};** with values your provided during database creation.Copy this connection string.
 1. Once the web site is created, locate it it in the **Dashboard** and click it to open **App Services** **Overview** screen.
-1. Click on **Application settings** in the left menu and add the copied Sql connection string in the **Connection strings** section as `DefaultConnection`.
-1. From the **Overview** tab of the App Service, download the publish profile by clicking **Get publish profile** and save it.  Other deployment mechanisms, such as from source control, can also be used.
+1. Click on **Application settings** in the left menu of the App service and add the copied Sql connection string in the **Connection strings** section as `DefaultConnection`.
+1. Choose `SQLAzure` in the **Type** dropdown. **Save** the setting.
+1. From the **Overview** tab of the App Service, download the publish profile by clicking the **Get publish profile** link and save it.  Other deployment mechanisms, such as from source control, can also be used.
 1. Switch to Visual Studio and go to the OAuth2-UserIdentity project.  Right click on the project in the Solution Explorer and select **Publish**.  Click **Import Profile** on the bottom bar, and import the publish profile that you downloaded earlier.
-1. Click on **Settings** and in the `Connection tab`, update the Destination URL so that it is https, for example [https://OAuth2-UserIdentity-contoso.azurewebsites.net](https://OAuth2-UserIdentity-contoso.azurewebsites.net). Click Next.
+1. Click on **Configure** and in the `Connection tab`, update the Destination URL so that it is a `https` in the home page url, for example [https://OAuth2-UserIdentity-contoso.azurewebsites.net](https://OAuth2-UserIdentity-contoso.azurewebsites.net). Click **Next**.
 1. On the Settings tab, make sure `Enable Organizational Authentication` is NOT selected.  Click **Save**. Click on **Publish** on the main screen.
 1. Visual Studio will publish the project and automatically open a browser to the URL of the project.  If you see the default web page of the project, the publication was successful.
 
 ### Update the Active Directory tenant application registration for `OAuth2-UserIdentity`
 
-1. Navigate to the [Azure portal](https://portal.azure.com).
-1. On the top bar, click on your account and under the **Directory** list, choose the Active Directory tenant containing the `OAuth2-UserIdentity` application.
-1. On the applications tab, select the `OAuth2-UserIdentity` application.
-1. In the **Settings** | page for your application, update the Logout URL fields with the address of your service, for example [https://OAuth2-UserIdentity-contoso.azurewebsites.net](https://OAuth2-UserIdentity-contoso.azurewebsites.net)
-1. From the *Settings -> Properties* menu, update the **Home page URL**, to the address of your service, for example [https://OAuth2-UserIdentity-contoso.azurewebsites.net](https://OAuth2-UserIdentity-contoso.azurewebsites.net). Save the configuration.
-1. Add the same URL in the list of values of the *Settings -> Reply URLs* menu
+1. Navigate back to to the [Azure portal](https://portal.azure.com).
+In the left-hand navigation pane, select the **Azure Active Directory** service, and then select **App registrations (Preview)**.
+1. In the resultant screen, select the `OAuth2-UserIdentity` application.
+1. In the **Authentication** | page for your application, update the Logout URL fields with the address of your service, for example [https://OAuth2-UserIdentity-contoso.azurewebsites.net](https://OAuth2-UserIdentity-contoso.azurewebsites.net)
+1. From the *Branding* menu, update the **Home page URL**, to the address of your service, for example [https://OAuth2-UserIdentity-contoso.azurewebsites.net](https://OAuth2-UserIdentity-contoso.azurewebsites.net). Save the configuration.
+1. Add the same URL in the list of values of the *Authentication -> Redirect URIs* menu. If you have multiple redirect urls, make sure that there a new entry using the App service's Uri for each redirect url.
 
 ## How To Recreate This Sample
 
