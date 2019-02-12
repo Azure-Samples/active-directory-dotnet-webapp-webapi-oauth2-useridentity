@@ -24,7 +24,7 @@ namespace OAuth2_UserIdentity
         // The Post Logout Redirect Uri is the URL where the user will be redirected after they sign out.
         //
         public static string clientId = ConfigurationManager.AppSettings["ida:ClientId"];
-        public static string appKey = ConfigurationManager.AppSettings["ida:AppKey"];
+        public static string clientSecret = ConfigurationManager.AppSettings["ida:ClientSecret"];
         private static string aadInstance = ConfigurationManager.AppSettings["ida:AADInstance"];
         public static string tenant = ConfigurationManager.AppSettings["ida:Tenant"];
         public static string graphUserUrl = ConfigurationManager.AppSettings["ida:GraphUserUrl"];

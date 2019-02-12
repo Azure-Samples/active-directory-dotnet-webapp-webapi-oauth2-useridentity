@@ -135,7 +135,7 @@ This project has one WebApp / Web API projects. To deploy them to Azure Web Site
 ### Create and publish the `OAuth2-UserIdentity` to an Azure Web Site
 
 1. Sign in to the [Azure portal](https://portal.azure.com).
-1. Click **Create a resource** in the top left-hand corner, select **Web + Mobile** --> **Web App**, select the hosting plan and region, and give your web site a name, for example, `OAuth2-UserIdentity-contoso.azurewebsites.net`.  Click Create Web Site.
+1. Click **Create a resource** in the top left-hand corner, select **Web** --> **Web App**, select the hosting plan and region, and give your web site a name, for example, `OAuth2-UserIdentity-contoso.azurewebsites.net`.  Click Create Web Site.
 1. Choose **SQL Database**, click on "Create a new database", enter `DefaultConnection` as the **DB Connection String Name**.
 1. Select or create a database server, and enter server login credentials.
 1. Once the web site is created, click on it to manage it.  For this set of steps, download the publish profile by clicking **Get publish profile** and save it.  Other deployment mechanisms, such as from source control, can also be used.
