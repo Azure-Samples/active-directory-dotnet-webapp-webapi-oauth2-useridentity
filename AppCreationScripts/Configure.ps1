@@ -211,7 +211,7 @@ Function ConfigureApplications
    $configFile = $pwd.Path + "\..\OAuth2-UserIdentity\Web.Config"
    Write-Host "Updating the sample code ($configFile)"
    ReplaceSetting -configFilePath $configFile -key "ida:ClientId" -newValue $serviceAadApplication.AppId
-   ReplaceSetting -configFilePath $configFile -key "ida:AppKey" -newValue $serviceAppKey
+   ReplaceSetting -configFilePath $configFile -key "ida:ClientSecret" -newValue $serviceAppKey
    ReplaceSetting -configFilePath $configFile -key "ida:Tenant" -newValue $tenantName
 
    Add-Content -Value "</tbody></table></body></html>" -Path createdApps.html  

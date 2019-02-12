@@ -65,8 +65,7 @@ If you want to use this automation, read the instructions in [App Creation Scrip
 As a first step you'll need to:
 
 1. Sign in to the [Azure portal](https://portal.azure.com) using either a work or school account or a personal Microsoft account.
-1. If your account gives you access to more than one tenant, select your account in the top right corner, and set your portal session to the desired Azure AD tenant
-   (using **Switch Directory**).
+1. If your account is present in more than one Azure AD tenant, select `Directory + Subscription` at the top right corner in the menu on top of the page, and switch your portal session to the desired Azure AD tenant.   
 1. In the left-hand navigation pane, select the **Azure Active Directory** service, and then select **App registrations (Preview)**.
 
 #### Register the service app (OAuth2-UserIdentity)
@@ -78,11 +77,13 @@ As a first step you'll need to:
    - In the Redirect URI (optional) section, select **Web** in the combo-box and enter the following redirect URIs.
        - `https://localhost:44323/`
        - `https://localhost:44323/OAuth`
+    > Note that if there are more than one redirect URIs, you'd need to add them from the **Authentication** tab later after the app has been created succesfully. 
 1. Select **Register** to create the application.
 1. On the app **Overview** page, find the **Application (client) ID** value and record it for later. You'll need it to configure the Visual Studio configuration file for this project.
 1. In the list of pages for the app, select **Authentication**.
    - In the **Advanced settings** section set **Logout URL** to `https://localhost:44323/Account/LogOff`
-   - In the **Advanced settings** | **Implicit grant** section, check **Access tokens** and **ID tokens** as this sample requires the [Implicit grant flow](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-implicit-grant-flow)to be enabled to
+   - In the **Advanced settings** | **Implicit grant** section, check **Access tokens** and **ID tokens** as this sample requires 
+   the [Implicit grant flow](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-implicit-grant-flow)to be enabled to
    sign-in the user, and call an API.
 1. Select **Save**.
 1. From the **Certificates & secrets** page, in the **Client secrets** section, choose **New client secret**:
@@ -98,7 +99,6 @@ As a first step you'll need to:
    - In the *Commonly used Microsoft APIs* section, click on **Microsoft Graph**
    - In the **Delegated permissions** section, ensure that the right permissions are checked: **User.Read**. Use the search box if necessary.
    - Select the **Add permissions** button
-
 
 ### Step 3:  Configure the sample to use your Azure AD tenant
 
@@ -119,10 +119,10 @@ Clean the solution, rebuild the solution, and run it.
 
 Explore the sample by
 
-1. registering an account in the application
-1. signing in using that account, clicking the Profile link
-1. on the Profile page linking an AAD user's account and seeing their profile information
-1. sign out from the application, and starting again.
+1. Click on the **Register** link on the top menu to register a local account with the application.
+1. Use the the **Log in** link then to sign-in using that local account.
+1. Thereafter, click on the **Profile** link to open  the Profile page. If you are not signed in to Azure AD, use the link provided at the bottom to link an AAD user's account and seeing their profile information.
+1. Sign out from the application, and starting again.
 
 ## How to deploy this sample to Azure
 
@@ -135,10 +135,16 @@ This project has one WebApp / Web API projects. To deploy them to Azure Web Site
 ### Create and publish the `OAuth2-UserIdentity` to an Azure Web Site
 
 1. Sign in to the [Azure portal](https://portal.azure.com).
-1. Click **Create a resource** in the top left-hand corner, select **Web** --> **Web App**, select the hosting plan and region, and give your web site a name, for example, `OAuth2-UserIdentity-contoso.azurewebsites.net`.  Click Create Web Site.
-1. Choose **SQL Database**, click on "Create a new database", enter `DefaultConnection` as the **DB Connection String Name**.
+1. Click **Create a resource** in the top left-hand corner, select **Web** --> **Web App**, and give your web site a name, for example, `OAuth2-UserIdentity-contoso.azurewebsites.net`.
+1. Thereafter select the subscription, resource group, App service plan and region, `OS` will be **Windows** and `Publish` will be **Code**.
+1. Click `Create`.
+1. In the **Additional Resources** list on the right hand side, Choose **SQL Database**, to create a new database. Follow the `Quickstart tutorial` if needed.
 1. Select or create a database server, and enter server login credentials.
-1. Once the web site is created, click on it to manage it.  For this set of steps, download the publish profile by clicking **Get publish profile** and save it.  Other deployment mechanisms, such as from source control, can also be used.
+1. Once the database is created, click on it to get to its manage screen.
+1. Click on **Connection Strings** on left menu and copy the **ADO.NET (SQL authentication)** connection string. Populate  **User ID={your_username};Password={your_password};** with values your provided during database creation.Copy this connection string.
+1. Once the web site is created, locate it it in the **Dashboard** and click it to open **App Services** **Overview** screen.
+1. Click on **Application settings** in the left menu and add the copied Sql connection string in the **Connection strings** section as `DefaultConnection`.
+1. From the **Overview** tab of the App Service, download the publish profile by clicking **Get publish profile** and save it.  Other deployment mechanisms, such as from source control, can also be used.
 1. Switch to Visual Studio and go to the OAuth2-UserIdentity project.  Right click on the project in the Solution Explorer and select **Publish**.  Click **Import Profile** on the bottom bar, and import the publish profile that you downloaded earlier.
 1. Click on **Settings** and in the `Connection tab`, update the Destination URL so that it is https, for example [https://OAuth2-UserIdentity-contoso.azurewebsites.net](https://OAuth2-UserIdentity-contoso.azurewebsites.net). Click Next.
 1. On the Settings tab, make sure `Enable Organizational Authentication` is NOT selected.  Click **Save**. Click on **Publish** on the main screen.
@@ -155,7 +161,7 @@ This project has one WebApp / Web API projects. To deploy them to Azure Web Site
 
 ## How To Recreate This Sample
 
-1. In Visual Studio 2017, create a new ASP.Net MVC web application with Authentication set to `Invididual User Accounts`.
+1. In Visual Studio 2017, create a new ASP.Net MVC web application with Authentication set to `Individual User Accounts`.
 1. Set SSL Enabled to be True.  Note the SSL URL.
 1. In the project properties, Web properties, set the Project Url to be the SSL URL.
 1. Add the latest [Active Directory Authentication Library NuGet] (`Microsoft.IdentityModel.Clients.ActiveDirectory`).
@@ -163,7 +169,7 @@ This project has one WebApp / Web API projects. To deploy them to Azure Web Site
 1. Add a new empty MVC5 controller `UserProfileController` to the project.  Copy the implementation of the controller from the sample.  Remember to include the [Authorize] attribute on the class definition.
 1. In `Views` --> `UserProfile` create a new view, `Index.cshtml`, and copy the implementation from this sample.
 1. In the shared `_Layout` view, add the Action Link for Profile that is in the sample.
-1. Add a new empty MVC5 controller `OAuthController` to the project.  Copy the implemementation of the controller from the sample.
+1. Add a new empty MVC5 controller `OAuthController` to the project.  Copy the implementation of the controller from the sample.
 1. In AccountController's LogOff() method, copy the code which clears the token cache.
 1. In `web.config`, in `<appSettings>`, create keys for `ida:ClientId`, `ida:AppKey`, `ida:AADInstance`, `ida:Tenant`, `ida:GraphResourceId`, and `ida:GraphUserUrl` and set the values accordingly.  For the public Azure AD, the value of `ida:AADInstance` is `https://login.microsoftonline.com/{0}` the value of `ida:GraphResourceId` is `https://graph.microsoft.com`, and the value of `ida:GraphUserUrl` is `https://graph.microsoft.com/me`.
 1. In `web.config` add this line in the `<system.web>` section: `<sessionState timeout="525600" />`.  This increases the ASP.Net session state timeout to it's maximum value so that access tokens and refresh tokens cache in session state aren't cleared after the default timeout of 20 minutes.
