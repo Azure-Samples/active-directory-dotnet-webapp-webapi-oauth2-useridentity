@@ -48,7 +48,7 @@
           "value": ".AppId"
         },
         {
-          "key": "ida:AppKey",
+          "key": "ida:ClientSecret",
           "value": ".AppKey"
         },
         {
