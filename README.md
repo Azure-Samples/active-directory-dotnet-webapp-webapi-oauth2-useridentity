@@ -12,7 +12,7 @@ endpoint: AAD v1.0
 
 ![Build badge](https://identitydivision.visualstudio.com/_apis/public/build/definitions/a7934fdd-dcde-4492-a406-7fad6ac00e17/756/badge)
 
-> You might also be interested in this sample: https://github.com/Azure-Samples/active-directory-dotnet-webapp-webapi-oauth2-useridentity
+> You might also be interested in this sample: https://github.com/Azure-Samples/ms-identity-aspnetcore-webapp-tutorial
 >
 > This newer sample takes advantage of the Microsoft identity platform (formerly Azure AD v2.0).
 >
