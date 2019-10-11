@@ -116,7 +116,7 @@ Open the solution in Visual Studio to configure the projects
 
 1. Open the `OAuth2-UserIdentity\Web.Config` file
 1. Find the app key `ida:ClientId` and replace the existing value with the application ID (clientId) of the `OAuth2-UserIdentity` application copied from the Azure portal.
-1. Find the app key `ida:AppKey` and replace the existing value with the key you saved during the creation of the `OAuth2-UserIdentity` app, in the Azure portal.
+1. Find the app key `ida:ClientSecret` and replace the existing value with the key you saved during the creation of the `OAuth2-UserIdentity` app, in the Azure portal.
 1. Find the app key `ida:Tenant` and replace the existing value with your Azure AD tenant name.
 
 ### Step 4: Run the sample
