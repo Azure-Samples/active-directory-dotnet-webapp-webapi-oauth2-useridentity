@@ -85,7 +85,7 @@ As a first step you'll need to:
        - `https://localhost:44323/OAuth`
     > Note that if there are more than one redirect URIs, you'd need to add them from the **Authentication** tab later after the app has been created succesfully. 
 1. Select **Register** to create the application.
-1. On the app **Overview** page, find the **Application (client) ID** value and record it for later. You'll need it to configure the Visual Studio configuration file for this project.
+1. On the app **Overview** page, find the **Application (client) ID** and **Directory (tenant) ID** values and record them for later. You'll need them to configure the Visual Studio configuration file for this project.
 1. In the list of pages for the app, select **Authentication**.
    - In the **Advanced settings** section set **Logout URL** to `https://localhost:44323/Account/LogOff`
    - In the **Advanced settings** | **Implicit grant** section, check **Access tokens** and **ID tokens** as this sample requires 
@@ -116,7 +116,7 @@ Open the solution in Visual Studio to configure the projects
 
 1. Open the `OAuth2-UserIdentity\Web.Config` file
 1. Find the app key `ida:ClientId` and replace the existing value with the application ID (clientId) of the `OAuth2-UserIdentity` application copied from the Azure portal.
-1. Find the app key `ida:ClientSecret` and replace the existing value with the key you saved during the creation of the `OAuth2-UserIdentity` app, in the Azure portal.
+1. Find the app key `ida:AppKey` and replace the existing value with the key you saved during the creation of the `OAuth2-UserIdentity` app, in the Azure portal.
 1. Find the app key `ida:Tenant` and replace the existing value with your Azure AD tenant name.
 
 ### Step 4: Run the sample
